@@ -1,59 +1,92 @@
 [
     {
-        "id": 1000,
+        "id": 1010,
         "priority": 1,
-        "action": {
-            "type": "block"
-        },
+        "action": { "type": "block" },
         "condition": {
             "urlFilter": "*adzilla*",
-            "resourceTypes": [
-                "main_frame",
-                "sub_frame",
-                "script",
-                "image"
-            ]
+            "resourceTypes": ["main_frame", "sub_frame", "script", "image"]
         }
     },
     {
-        "id": 1001,
+        "id": 1011,
         "priority": 1,
-        "action": {
-            "type": "block"
-        },
+        "action": { "type": "block" },
         "condition": {
-            "urlFilter": "*://*.doubleclick.net/*",
-            "resourceTypes": [
-                "script",
-                "image"
-            ]
+            "urlFilter": "*google-analytics.com*",
+            "resourceTypes": ["script"]
         }
     },
     {
-        "id": 1002,
+        "id": 1012,
         "priority": 1,
-        "action": {
-            "type": "block"
-        },
+        "action": { "type": "block" },
         "condition": {
-            "urlFilter": "*://*.google-analytics.com/*",
-            "resourceTypes": [
-                "script"
-            ]
+            "urlFilter": "*googletagservices.com*",
+            "resourceTypes": ["script"]
         }
     },
     {
-        "id": 1003,
+        "id": 1013,
         "priority": 1,
-        "action": {
-            "type": "block"
-        },
+        "action": { "type": "block" },
         "condition": {
-            "urlFilter": "*://*.zedo.com/*",
-            "resourceTypes": [
-                "script",
-                "sub_frame"
-            ]
+            "urlFilter": "*popads.net*",
+            "resourceTypes": ["script", "sub_frame"]
+        }
+    },
+    {
+        "id": 1014,
+        "priority": 1,
+        "action": { "type": "block" },
+        "condition": {
+            "urlFilter": "*adnxs.com*",
+            "resourceTypes": ["script", "image"]
+        }
+    },
+    {
+        "id": 1015,
+        "priority": 1,
+        "action": { "type": "block" },
+        "condition": {
+            "urlFilter": "*taboola.com*",
+            "resourceTypes": ["script", "sub_frame"]
+        }
+    },
+    {
+        "id": 1016,
+        "priority": 1,
+        "action": { "type": "block" },
+        "condition": {
+            "urlFilter": "*outbrain.com*",
+            "resourceTypes": ["script", "sub_frame"]
+        }
+    },
+    {
+        "id": 1017,
+        "priority": 1,
+        "action": { "type": "block" },
+        "condition": {
+            "urlFilter": "*scorecardresearch.com*",
+            "resourceTypes": ["script"]
+        }
+    },
+    {
+        "id": 1018,
+        "priority": 1,
+        "action": { "type": "block" },
+        "condition": {
+            "urlFilter": "*amazon-adsystem.com*",
+            "resourceTypes": ["script"]
+        }
+    },
+    {
+        "id": 1019,
+        "priority": 1,
+        "action": { "type": "block" },
+        "condition": {
+            "urlFilter": "*smartadserver.com*",
+            "resourceTypes": ["script", "sub_frame"]
         }
     }
 ]
