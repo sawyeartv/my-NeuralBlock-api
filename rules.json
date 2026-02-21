@@ -1,6 +1,22 @@
 [
     {
-        "id": 1,
+        "id": 1000,
+        "priority": 1,
+        "action": {
+            "type": "block"
+        },
+        "condition": {
+            "urlFilter": "*adzilla*",
+            "resourceTypes": [
+                "main_frame",
+                "sub_frame",
+                "script",
+                "image"
+            ]
+        }
+    },
+    {
+        "id": 1001,
         "priority": 1,
         "action": {
             "type": "block"
@@ -14,7 +30,7 @@
         }
     },
     {
-        "id": 2,
+        "id": 1002,
         "priority": 1,
         "action": {
             "type": "block"
@@ -27,7 +43,7 @@
         }
     },
     {
-        "id": 3,
+        "id": 1003,
         "priority": 1,
         "action": {
             "type": "block"
