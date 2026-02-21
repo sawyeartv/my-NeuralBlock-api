@@ -1,5 +1,7 @@
-// NeuralBlock Background Service Worker
 
+// NeuralBlock Background Service Worker
+const RULES_URL = "https://raw.githubusercontent.com/sawyeartv/my-NeuralBlock-api/refs/heads/main/rules.json";
+const MAX_LOGS = 500;
 // Initialize stats if they don't exist
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.get(['blockedCount', 'isEnabled'], (result) => {
@@ -71,3 +73,4 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     });
   }
 });
+
