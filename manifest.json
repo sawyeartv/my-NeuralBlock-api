@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "NeuralBlock Pro",
-    "version": "1.2.0",
+    "version": "1.4.0",
     "author": "Antigravity & Neural Labs",
     "description": "Premium, high-performance ad blocker with neural design and analytics.",
     "permissions": [
@@ -48,3 +48,4 @@
     "options_page": "settings/settings.html"
 
 }
+
