@@ -1,6 +1,12 @@
 // Neural Analytics Controller
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if we are running in extension context
+    if (!chrome.declarativeNetRequest) {
+        alert("CRITICAL ERROR: Extension context not found! \n\nPlease open this page from the extension icon (Popup -> Admin) instead of opening the file locally.");
+        return;
+    }
+
     const logBody = document.getElementById('log-body');
     const totalCountEl = document.getElementById('total-count');
     const proceduralCountEl = document.getElementById('procedural-count');
@@ -15,21 +21,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const syncBlacklistBtn = document.getElementById('sync-blacklist-btn');
     const systemVersionInput = document.getElementById('system-version-input');
     const applyVersionBtn = document.getElementById('apply-version-btn');
+    const cloudUrlInput = document.getElementById('cloud-url-input');
+    const syncCloudBtn = document.getElementById('sync-cloud-btn');
+    const syncStatusEl = document.getElementById('sync-status');
 
     function updateDashboard() {
-        chrome.storage.local.get(['blockedCount', 'logs', 'blacklist', 'ruleTier', 'systemVersion'], (result) => {
+        chrome.storage.local.get(['blockedCount', 'logs', 'blacklist', 'ruleTier', 'systemVersion', 'cloudSyncUrl', 'lastSync'], (result) => {
             const logs = result.logs || [];
             const total = result.blockedCount || 0;
             const blacklist = result.blacklist || [];
             const tier = result.ruleTier || 'standard';
             const version = result.systemVersion || chrome.runtime.getManifest().version;
+            const cloudUrl = result.cloudSyncUrl || '';
+            const lastSync = result.lastSync || 'Never';
 
             totalCountEl.textContent = total.toLocaleString();
             activeTierEl.textContent = tier.toUpperCase();
+            syncStatusEl.textContent = `Last sync: ${lastSync}`;
 
             // Update version input
             if (!systemVersionInput.matches(':focus')) {
                 systemVersionInput.value = version;
+            }
+
+            // Update cloud URL input
+            if (!cloudUrlInput.matches(':focus')) {
+                cloudUrlInput.value = cloudUrl;
             }
 
             // Update active tier UI
@@ -145,7 +162,66 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+
+    // Cloud Sync logic
+    syncCloudBtn.addEventListener('click', async () => {
+        const url = cloudUrlInput.value.trim();
+        if (!url) return alert('Please enter a valid GitHub RAW URL.');
+
+        syncCloudBtn.disabled = true;
+        syncCloudBtn.textContent = 'Syncing...';
+        syncStatusEl.textContent = 'Syncing from cloud...';
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Network response was not ok');
+            const rules = await response.json();
+
+            // Apply rules to DNR
+            // Rules from GitHub are expected to be in MV3 DNR format
+            if (!chrome.declarativeNetRequest) {
+                throw new Error("DNR API is not available. Please ensure the extension is loaded correctly with 'declarativeNetRequest' permission.");
+            }
+
+            chrome.declarativeNetRequest.getDynamicRules(oldRules => {
+                const oldRuleIds = oldRules.map(r => r.id);
+                // We keep IDs from the JSON or assign them starting from 1000 to avoid clash with local blacklist (100+)
+                const processedRules = rules.map((r, i) => ({
+                    ...r,
+                    id: r.id || (i + 1000)
+                }));
+
+                chrome.declarativeNetRequest.updateDynamicRules({
+                    removeRuleIds: oldRuleIds.filter(id => id >= 1000), // Only remove previously synced cloud rules
+                    addRules: processedRules
+                }, () => {
+                    const now = new Date().toLocaleString();
+                    chrome.storage.local.set({
+                        cloudSyncUrl: url,
+                        lastSync: now
+                    }, () => {
+                        alert('Neural Cloud Rules Synchronized!');
+                        updateDashboard();
+                        syncCloudBtn.disabled = false;
+                        syncCloudBtn.textContent = 'Sync Now';
+                    });
+                });
+            });
+        } catch (error) {
+            console.error('Sync failed:', error);
+            alert('Sync failed: ' + error.message);
+            syncCloudBtn.disabled = false;
+            syncCloudBtn.textContent = 'Sync Now';
+            syncStatusEl.textContent = 'Last sync failed';
+        }
+    });
+
     function updateDynamicRules(list) {
+        if (!chrome.declarativeNetRequest) {
+            console.error("DNR API not available");
+            return;
+        }
+
         const rules = list.map((pattern, index) => {
             let urlFilter = pattern;
             if (!pattern.includes('*') && !pattern.startsWith('http')) {

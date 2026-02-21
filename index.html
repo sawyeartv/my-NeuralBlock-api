@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuralBlock | The Future of Ad-Blocking</title>
+    <link rel="stylesheet" href="landing.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="neural-core"></div>
+    
+    <header>
+        <div class="container nav-container">
+            <div class="logo">
+                <span class="neural">NEURAL</span><span class="block">BLOCK</span>
+            </div>
+            <nav>
+                <a href="#features">Features</a>
+                <a href="admin/admin.html" class="admin-link">Admin Panel</a>
+                <button id="login-trigger" class="btn-primary">Login</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Experience the <span class="gradient-text">Neural</span> Web</h1>
+                    <p>High-performance ad-blocking with neural-inspired analytics and cloud synchronization.</p>
+                    <div class="cta-group">
+                        <button class="btn-glow">Add to Opera</button>
+                        <button class="btn-outline">View Docs</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="icon">🛡️</div>
+                        <h3>Proactive Shield</h3>
+                        <p>Neutralizes ads before they even break the surface of your browser.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📊</div>
+                        <h3>Neural Analytics</h3>
+                        <p>Deep insights into what's being blocked and why.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">☁️</div>
+                        <h3>Cloud Sync</h3>
+                        <p>Manage your rules from anywhere with GitHub integration.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Access Command Center</h2>
+            <form id="login-form">
+                <div class="input-group">
+                    <label>Terminal ID</label>
+                    <input type="text" placeholder="admin@neural.labs" required>
+                </div>
+                <div class="input-group">
+                    <label>Security Key</label>
+                    <input type="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-primary full-width">Initialize Connection</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Neural Labs. Built with Antigravity.</p>
+        </div>
+    </footer>
+
+    <script src="landing.js"></script>
+</body>
+</html>

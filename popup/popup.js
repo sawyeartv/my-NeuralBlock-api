@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusDot = document.getElementById('status-dot');
 
     const settingsBtn = document.getElementById('settings-btn');
+    const adminBtn = document.getElementById('admin-btn');
 
     // Load initial state
     chrome.storage.local.get(['blockedCount', 'isEnabled', 'systemVersion'], (result) => {
@@ -37,6 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
     settingsBtn.addEventListener('click', (e) => {
         e.preventDefault();
         chrome.runtime.openOptionsPage();
+    });
+
+    // Open Admin Panel
+    adminBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        chrome.tabs.create({ url: chrome.runtime.getURL('admin/admin.html') });
     });
 
     // Toggle protection

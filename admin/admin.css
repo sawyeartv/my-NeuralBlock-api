@@ -191,6 +191,29 @@ nav {
     gap: 24px;
 }
 
+#cloud-url-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 10px;
+    color: white;
+    font-size: 0.8rem;
+    margin-bottom: 12px;
+}
+
+#cloud-url-input:focus {
+    outline: none;
+    border-color: var(--accent-cyan);
+}
+
+.sync-status {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: 10px;
+    font-family: var(--font-mono);
+}
+
 .card {
     background: var(--card-bg);
     border: 1px solid var(--border-color);

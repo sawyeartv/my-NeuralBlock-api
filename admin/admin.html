@@ -72,6 +72,15 @@
             </div>
 
             <div class="side-panel">
+                <div class="card cloud-sync">
+                    <h3>Neural Cloud Sync</h3>
+                    <p class="card-desc">Sync rules from remote GitHub repository</p>
+                    <input type="text" id="cloud-url-input"
+                        placeholder="https://raw.githubusercontent.com/.../rules.json">
+                    <button id="sync-cloud-btn" class="secondary-btn">Sync Now</button>
+                    <div id="sync-status" class="sync-status">Last sync: Never</div>
+                </div>
+
                 <div class="card blacklist-management">
                     <h3>Global Blacklist Editor</h3>
                     <p class="card-desc">Add domains or wildcards (e.g. *analytics*)</p>

@@ -1,21 +1,73 @@
-
-// NeuralBlock Background Service Worker
-const RULES_URL = "https://raw.githubusercontent.com/sawyeartv/my-NeuralBlock-api/refs/heads/main/rules.json";
+// NeuralBlock Pro - Background Service Worker
+const FALLBACK_RULES_URL = "https://raw.githubusercontent.com/sawyeartv/my-NeuralBlock-api/refs/heads/main/rules.json";
 const MAX_LOGS = 500;
-// Initialize stats if they don't exist
+
+// 1. GITHUB SENKRONİZASYON MEKANİZMASI
+async function fetchAndApplyRules() {
+  if (!chrome.declarativeNetRequest) {
+    console.error("NeuralBlock: DNR API henüz hazır değil veya izinler eksik.");
+    return;
+  }
+
+  try {
+    console.log("NeuralBlock: Güncelleme kontrol ediliyor...");
+    // Get dynamic URL if set in storage, otherwise use fallback
+    const result = await chrome.storage.local.get(['cloudSyncUrl']);
+    const url = result.cloudSyncUrl || FALLBACK_RULES_URL;
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("GitHub erişim hatası");
+
+    const rules = await response.json();
+
+    // Assign IDs starting from 1000 for cloud rules to avoid clash with local blacklist (100+)
+    const processedRules = rules.map((r, i) => ({
+      ...r,
+      id: r.id || (i + 1000)
+    }));
+
+    // Get current dynamic rules to clean up only cloud rules (ID >= 1000)
+    const oldRules = await chrome.declarativeNetRequest.getDynamicRules();
+    const oldRuleIds = oldRules.map(r => r.id).filter(id => id >= 1000);
+
+    await chrome.declarativeNetRequest.updateDynamicRules({
+      removeRuleIds: oldRuleIds,
+      addRules: processedRules
+    });
+
+    const now = new Date().toLocaleString();
+    await chrome.storage.local.set({ lastSync: now });
+
+    console.log('NeuralBlock: GitHub senkronizasyonu başarılı. Toplam kural:', rules.length);
+  } catch (err) {
+    console.error('NeuralBlock: Senkronizasyon hatası:', err);
+  }
+}
+
+// 2. İLK KURULUM VE ALARM YÖNETİMİ
 chrome.runtime.onInstalled.addListener(() => {
+  fetchAndApplyRules();
+
+  // Her 60 dakikada bir güncelleme kontrolü yap
+  chrome.alarms.create("periodicUpdate", {
+    periodInMinutes: 60
+  });
+
+  // İstatistikleri başlat
   chrome.storage.local.get(['blockedCount', 'isEnabled'], (result) => {
-    if (result.blockedCount === undefined) {
-      chrome.storage.local.set({ blockedCount: 0 });
-    }
-    if (result.isEnabled === undefined) {
-      chrome.storage.local.set({ isEnabled: true });
-    }
+    if (result.blockedCount === undefined) chrome.storage.local.set({ blockedCount: 0 });
+    if (result.isEnabled === undefined) chrome.storage.local.set({ isEnabled: true });
   });
 });
 
-const MAX_LOGS = 500;
+// Alarm tetiklendiğinde güncelle
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === "periodicUpdate") {
+    fetchAndApplyRules();
+  }
+});
 
+// 3. LOGLAMA VE İSTATİSTİK FONKSİYONU
 function logBlockEvent(domain, method) {
   chrome.storage.local.get(['blockedCount', 'logs'], (result) => {
     const currentCount = result.blockedCount || 0;
@@ -24,8 +76,8 @@ function logBlockEvent(domain, method) {
     const newEntry = {
       timestamp: Date.now(),
       domain: domain || 'unknown',
-      method: method, // 'Network' or 'Procedural'
-      url: domain // Using domain as url for simplicity in logs
+      method: method, // 'Network' veya 'Procedural'
+      url: domain
     };
 
     logs.unshift(newEntry);
@@ -38,39 +90,44 @@ function logBlockEvent(domain, method) {
   });
 }
 
-// Listen for network requests being blocked
-chrome.declarativeNetRequest.onRuleMatchedDebug?.addListener((info) => {
-  const url = new URL(info.request.url);
-  logBlockEvent(url.hostname, 'Network');
-});
+// Network engellemelerini dinle
+if (chrome.declarativeNetRequest.onRuleMatchedDebug) {
+  chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((info) => {
+    try {
+      const url = new URL(info.request.url);
+      logBlockEvent(url.hostname, 'Network');
+    } catch (e) {
+      logBlockEvent("Zararlı Kaynak", 'Network');
+    }
+  });
+}
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+// Content Script'ten gelen mesajları yakala
+chrome.runtime.onMessage.addListener((message, sender) => {
   if (message.type === 'AD_BLOCKED') {
     const domain = sender.tab ? new URL(sender.tab.url).hostname : 'unknown';
     logBlockEvent(domain, 'Procedural');
   }
 });
 
-// Advanced: Script Injection (Defusing anti-adblock)
+// 4. ANTI-ADBLOCK DEFUSER (SCRİPT ENJEKSİYONU)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'loading' && tab.url) {
+  if (changeInfo.status === 'loading' && tab.url && !tab.url.startsWith('chrome://') && !tab.url.startsWith('about:')) {
     chrome.storage.local.get(['isEnabled'], (result) => {
       if (result.isEnabled !== false) {
-        // Example: Injecting a script to disable common anti-adblock detectable functions
         chrome.scripting.executeScript({
           target: { tabId: tabId },
-          world: 'MAIN', // Run in the execution world of the page
+          world: 'MAIN',
           func: () => {
             try {
-              // Basic defuser: disable self-detecting loops or property checks
-              // This is a placeholder for more advanced site-specific defusers
+              // Anti-Adblock sistemlerini yanıltmak için global değişkenleri düzenle
+              window.adsBlocked = false;
+              window.canRunAds = true;
               console.log('NeuralBlock: Defusing script active.');
-              // window.adsBlocked = false; 
             } catch (e) { }
           }
-        }).catch(err => console.log('Scripting error:', err));
+        }).catch(() => { /* Errors are silent for restricted pages */ });
       }
     });
   }
 });
-
