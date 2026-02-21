@@ -184,6 +184,73 @@ nav {
     box-shadow: 0 0 10px var(--accent-cyan);
 }
 
+/* Context Banner */
+.context-banner {
+    background: rgba(0, 242, 255, 0.05);
+    border: 1px solid var(--accent-cyan);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: slideDown 0.5s ease-out;
+}
+
+.banner-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.context-banner .icon {
+    font-size: 1.2rem;
+}
+
+.context-banner .text {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.context-banner strong {
+    color: var(--accent-cyan);
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Remote Mode Adjustments */
+body.remote-mode .nav-btn,
+body.remote-mode .secondary-btn,
+body.remote-mode .tier-btn {
+    opacity: 0.6;
+    cursor: default;
+    pointer-events: none;
+}
+
+body.remote-mode #cloud-url-input {
+    opacity: 1;
+    pointer-events: all;
+    cursor: text;
+}
+
+body.remote-mode #global-blacklist-input {
+    opacity: 1;
+    pointer-events: all;
+    cursor: text;
+}
+
+body.remote-mode .live-indicator {
+    color: var(--text-secondary);
+}
+
+body.remote-mode .live-indicator::before {
+    background: var(--text-secondary);
+    animation: none;
+}
+
 /* Main Layout */
 .main-content {
     display: grid;

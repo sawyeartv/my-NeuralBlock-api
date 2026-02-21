@@ -2,9 +2,21 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // Check if we are running in extension context
-    if (!chrome.declarativeNetRequest) {
-        alert("CRITICAL ERROR: Extension context not found! \n\nPlease open this page from the extension icon (Popup -> Admin) instead of opening the file locally.");
-        return;
+    const isExtension = typeof chrome !== 'undefined' && chrome.declarativeNetRequest;
+    
+    if (!isExtension) {
+        console.warn("NeuralBlock: Operating in Remote Management Mode (No extension-level APIs available).");
+        document.body.classList.add('remote-mode');
+        // Inject a notice banner if it doesn't exist
+        const banner = document.createElement('div');
+        banner.className = 'context-banner';
+        banner.innerHTML = `
+            <div class="banner-content">
+                <span class="icon">🌐</span>
+                <span class="text"><strong>REMOTE MODE:</strong> You are managing rules for GitHub publication. Direct browser interaction is disabled.</span>
+            </div>
+        `;
+        document.querySelector('.container').prepend(banner);
     }
 
     const logBody = document.getElementById('log-body');
@@ -26,6 +38,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const syncStatusEl = document.getElementById('sync-status');
 
     function updateDashboard() {
+        if (!isExtension) {
+            // Mock data or static read-only for Remote Mode
+            totalCountEl.textContent = "CONNECTED";
+            activeTierEl.textContent = "REMOTE";
+            syncStatusEl.textContent = `Target: sawyeartv/my-NeuralBlock-api`;
+            
+            logBody.innerHTML = '<tr><td colspan="4" style="text-align: center; opacity: 0.5;">Logs only visible in Extension Mode</td></tr>';
+            targetList.innerHTML = '<li style="opacity: 0.5;">Connect extension to see stats</li>';
+            
+            // Set default cloud URL for convenient copying/checking
+            if (!cloudUrlInput.value) {
+                cloudUrlInput.value = "https://raw.githubusercontent.com/sawyeartv/my-NeuralBlock-api/refs/heads/main/rules.json";
+            }
+            return;
+        }
+
         chrome.storage.local.get(['blockedCount', 'logs', 'blacklist', 'ruleTier', 'systemVersion', 'cloudSyncUrl', 'lastSync'], (result) => {
             const logs = result.logs || [];
             const total = result.blockedCount || 0;
@@ -254,9 +282,11 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDashboard();
 
     // Real-time updates
-    chrome.storage.onChanged.addListener((changes) => {
-        if (changes.logs || changes.blockedCount || changes.systemVersion) {
-            updateDashboard();
-        }
-    });
+    if (isExtension) {
+        chrome.storage.onChanged.addListener((changes) => {
+            if (changes.logs || changes.blockedCount || changes.systemVersion) {
+                updateDashboard();
+            }
+        });
+    }
 });
