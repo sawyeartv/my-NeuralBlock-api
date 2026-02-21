@@ -8,7 +8,8 @@
         "declarativeNetRequest",
         "declarativeNetRequestFeedback",
         "storage",
-        "scripting"
+        "scripting",
+        "alarms"
     ],
     "host_permissions": [
         "<all_urls>"
@@ -46,6 +47,4 @@
         ]
     },
     "options_page": "settings/settings.html"
-
 }
-
