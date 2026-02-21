@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Analytics | Command Center</title>
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="neural-bg"></div>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <span class="neural">NEURAL</span><span class="analytics">ANALYTICS</span>
+                <span class="status-badge">SECURE</span>
+            </div>
+            <nav>
+                <button id="export-btn" class="nav-btn">Export Report</button>
+                <button id="clear-logs-btn" class="nav-btn danger">Purge Logs</button>
+            </nav>
+        </header>
+
+        <section class="overview-grid">
+            <div class="stat-card">
+                <label>Total Neutralized</label>
+                <div class="value" id="total-count">0</div>
+                <div class="trend positive">+12% vs last 24h</div>
+            </div>
+            <div class="stat-card">
+                <label>Procedural Strikes</label>
+                <div class="value" id="procedural-count">0</div>
+                <div class="progress-bar">
+                    <div class="fill" id="procedural-percent" style="width: 45%;"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <label>Active Rulesets</label>
+                <div class="value" id="active-tier">STANDARD</div>
+                <div class="version-controls">
+                    <button class="tier-btn active" data-tier="standard">STD</button>
+                    <button class="tier-btn" data-tier="lite">LITE</button>
+                    <button class="tier-btn" data-tier="pro">PRO</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="main-content">
+            <div class="card log-section">
+                <div class="card-header">
+                    <h3>Live Activity Stream</h3>
+                    <div class="live-indicator">LIVE FEED</div>
+                </div>
+                <div class="log-table-wrapper">
+                    <table id="log-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Target Domain</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="log-body">
+                            <!-- Logs will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="card blacklist-management">
+                    <h3>Global Blacklist Editor</h3>
+                    <p class="card-desc">Add domains or wildcards (e.g. *analytics*)</p>
+                    <textarea id="global-blacklist-input"
+                        placeholder="one-domain-per-line.com&#10;*bad-site*"></textarea>
+                    <button id="sync-blacklist-btn" class="secondary-btn">Sync Rules</button>
+                </div>
+
+                <div class="card top-targets">
+                    <h3>Top Targets</h3>
+                    <ul id="target-list" class="target-list">
+                        <!-- Top domains list -->
+                    </ul>
+                </div>
+
+                <div class="card system-health">
+                    <h3>System Configuration</h3>
+                    <div class="version-override">
+                        <span>Neural Engine Version</span>
+                        <div class="input-group">
+                            <input type="text" id="system-version-input" placeholder="e.g. v2.0.0">
+                            <button id="apply-version-btn">Apply</button>
+                        </div>
+                    </div>
+
+                    <div class="usage-metric">
+                        <span>Memory Usage</span>
+                        <div class="mini-bar">
+                            <div class="fill" style="width: 15%;"></div>
+                        </div>
+                    </div>
+                    <div class="usage-metric">
+                        <span>Storage Load</span>
+                        <div class="mini-bar">
+                            <div class="fill" style="width: 32%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="admin.js"></script>
+</body>
+
+</html>

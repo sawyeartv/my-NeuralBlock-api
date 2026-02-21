@@ -1,0 +1,30 @@
+/* NeuralBlock Global Cosmetic CSS */
+
+/* Hide common ad placeholders aggressively */
+.ad,
+.ads,
+.ad-box,
+.ad-inner,
+.ad-label,
+.ad-wrapper,
+[id^="ad-"],
+[class^="ad-"],
+[id*="googlesyndication"],
+[class*="sponsored"],
+[id*="sponsor"] {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Remove whitespace from hidden ads */
+iframe[src*="doubleclick.net"],
+iframe[src*="googleads"],
+iframe[id^="google_ads_frame"] {
+    display: none !important;
+}
